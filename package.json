@@ -1,0 +1,27 @@
+{
+  "name": "sedulo-junior-fullstack",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "npm run build -w apps/api && concurrently -k -n api,web -c cyan,magenta \"npm run dev -w apps/api\" \"npm run dev -w apps/web\"",
+    "build": "npm run build --workspaces",
+    "typecheck": "npm run typecheck --workspaces",
+    "lint": "oxlint apps tests playwright.config.ts",
+    "test": "npm run test -w apps/api",
+    "test:e2e": "playwright test",
+    "check": "npm run lint && npm run typecheck && npm test && npm run build"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "@types/node": "26.6.2",
+    "concurrently": "10.0.5",
+    "oxlint": "1.85.0",
+    "typescript": "7.0.2"
+  }
+}
