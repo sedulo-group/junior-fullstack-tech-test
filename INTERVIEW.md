@@ -22,11 +22,11 @@ Use the single app as it is; there is no good/bad mode or second version. Let th
 
 ### Deliberate code bug: API URL typo, visible immediately
 
-**Reproduce:** open DevTools → Console, then reload `/tasks`. No typing or clicking is needed. The browser reports `GET /api/task 404` and `[Taskroom] Failed to load tasks: Error: Cannot GET /task`. The page displays the API error and a retry button. The server logs the failed request too.
+**Reproduce:** open DevTools → Console, then reload `/tasks`. No typing or clicking is needed. The browser reports `GET /api/taskz 404` and `[Taskroom] Failed to load tasks: Error: Cannot GET /taskz`. The page displays the API error and a retry button. The server logs the failed request too.
 
-**Cause:** the `list` function in `apps/web/src/lib/api.ts` requests `/task` (singular). NestJS exposes `/tasks` (plural) in `apps/api/src/tasks/tasks.controller.ts`. Next.js forwards `/api/task` to `/task`, so this is a real failed request, not a fabricated console message. The catch block in `hooks/use-tasks.ts` logs the actual error and its stack.
+**Cause:** the `list` function in `apps/web/src/lib/api.ts` requests `/taskz` (a spelling mistake). NestJS exposes `/tasks` in `apps/api/src/tasks/tasks.controller.ts`. Next.js forwards `/api/taskz` to `/taskz`, so this is a real failed request, not a fabricated console message. The catch block in `hooks/use-tasks.ts` logs the actual error and its stack.
 
-**Fix:** add the missing `s` to the list URL. This is a one-character fix. Ask the candidate to compare the Network request with the controller route, make the change, reload, and confirm that the three task cards appear and the console is clear.
+**Fix:** replace the `z` with `s` in the list URL (`/taskz` → `/tasks`). This is a one-character fix. Ask the candidate to compare the Network request with the controller route, make the change, reload, and confirm that the three task cards appear and the console is clear.
 
 Once the URL is fixed, search should update immediately, including clearing, mixed-case input, and no matches. The intended contrast, alignment, and confirmation mistakes remain for the next part of the discussion. The create and detail pages are still accessible before fixing the list.
 

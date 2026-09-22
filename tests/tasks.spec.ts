@@ -3,7 +3,7 @@ import { expect, test, type Page } from "@playwright/test";
 // Keep the UX checks executable while the interview API typo is present.
 // This forwards to the real API; no task data is mocked here.
 async function repairListRequest(page: Page) {
-  await page.route("**/api/task", async (route) => {
+  await page.route("**/api/taskz", async (route) => {
     const response = await page.request.get("/api/tasks");
     await route.fulfill({ response });
   });
@@ -95,7 +95,7 @@ test("loading, API error, retry and an empty list", async ({ page }) => {
   const hold = new Promise<void>((resolve) => {
     release = resolve;
   });
-  await page.route(/\/api\/tasks?$/, async (route) => {
+  await page.route(/\/api\/task[sz]$/, async (route) => {
     await hold;
     await route.fulfill({
       status: 503,
@@ -108,11 +108,11 @@ test("loading, API error, retry and an empty list", async ({ page }) => {
   await expect(page.getByRole("main").getByRole("alert")).toContainText(
     "API temporarily unavailable",
   );
-  await page.unroute(/\/api\/tasks?$/);
+  await page.unroute(/\/api\/task[sz]$/);
   await repairListRequest(page);
   await page.getByRole("button", { name: "Try again" }).click();
   await expect(page.getByText("3 tasks shown · 1 of 3 complete")).toBeVisible();
-  await page.route(/\/api\/tasks?$/, (route) => route.fulfill({ json: [] }));
+  await page.route(/\/api\/task[sz]$/, (route) => route.fulfill({ json: [] }));
   await page.reload();
   await expect(
     page.getByRole("heading", { name: "Your first task starts here" }),

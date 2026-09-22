@@ -32,7 +32,7 @@ async function request(
 
 export const taskApi = {
   async list(signal?: AbortSignal): Promise<Task[]> {
-    const response = await request("/task", { signal });
+    const response = await request("/taskz", { signal });
     return response.json();
   },
 
