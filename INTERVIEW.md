@@ -77,7 +77,21 @@ Open `components/task-card.tsx`, `components/app-shell.tsx`, and the detail page
 
 Useful expectations: they can find a style, change it without copying a component, explain route parameters, and identify a loading/error state.
 
-## 4. Pick one small change (10–20 minutes)
+## 4. Simple TypeScript discussion (5 minutes)
+
+Open `apps/web/src/lib/tasks.ts`, `components/task-card.tsx`, `hooks/use-tasks.ts`, and `lib/api.ts`.
+
+- Which fields are required by the `Task` interface? Why does `NewTask` omit `id` and `status`?
+- What values does the `TaskStatus` union allow? What would happen if you assigned `"finished"`?
+- What does `TaskCardProps` tell you about the data its parent must pass?
+- Why can the detail page's task be `Task | null` while it is loading?
+- How does the `UseTasksResult` interface help a page use the hook?
+- What is the difference between an async method returning one task and a list of tasks?
+- Why do the Nest DTO classes still need validation decorators when the inputs have interfaces?
+
+Stick to interfaces, union types, optional fields, typed function parameters and return values. The code has no custom generics; standard React hook and Promise annotations name the values involved. TypeScript does not validate HTTP JSON at runtime, so discuss that boundary separately from compile-time checks.
+
+## 5. Pick one small change (10–20 minutes)
 
 After discussing or repairing the seeded defects, choose one extension.
 

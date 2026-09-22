@@ -3,7 +3,13 @@
 import { Box, Flex, SimpleGrid, Text } from "@chakra-ui/react";
 import { statusLabels, type Task, type TaskStatus } from "../lib/tasks";
 
-const summaries: { status: TaskStatus; colour: string; hint: string }[] = [
+interface StatusSummary {
+  status: TaskStatus;
+  colour: string;
+  hint: string;
+}
+
+const summaries: StatusSummary[] = [
   { status: "todo", colour: "gray.500", hint: "Ready when you are" },
   {
     status: "in-progress",
@@ -13,7 +19,11 @@ const summaries: { status: TaskStatus; colour: string; hint: string }[] = [
   { status: "done", colour: "teal.600", hint: "Small wins add up" },
 ];
 
-export function TaskSummary({ tasks }: { tasks: Task[] }) {
+interface TaskSummaryProps {
+  tasks: Task[];
+}
+
+export function TaskSummary({ tasks }: TaskSummaryProps) {
   return (
     <SimpleGrid
       as="section"

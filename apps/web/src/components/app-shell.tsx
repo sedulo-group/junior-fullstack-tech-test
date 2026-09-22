@@ -10,7 +10,11 @@ const links = [
   { href: "/tasks/new", label: "Add task" },
 ];
 
-export function AppShell({ children }: { children: ReactNode }) {
+interface AppShellProps {
+  children: ReactNode;
+}
+
+export function AppShell({ children }: AppShellProps) {
   const pathname = usePathname();
 
   return (

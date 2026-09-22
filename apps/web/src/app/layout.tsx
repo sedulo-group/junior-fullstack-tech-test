@@ -8,6 +8,18 @@ export const metadata: Metadata = {
   description: "A small Next.js, NestJS and Chakra UI task tracker.",
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
-  return <html lang="en"><body><Provider><AppShell>{children}</AppShell></Provider></body></html>;
+interface RootLayoutProps {
+  children: ReactNode;
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
+  return (
+    <html lang="en">
+      <body>
+        <Provider>
+          <AppShell>{children}</AppShell>
+        </Provider>
+      </body>
+    </html>
+  );
 }

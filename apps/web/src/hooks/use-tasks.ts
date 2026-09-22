@@ -4,7 +4,14 @@ import { useEffect, useState } from "react";
 import { taskApi } from "../lib/api";
 import { errorMessage, type Task } from "../lib/tasks";
 
-export function useTasks() {
+interface UseTasksResult {
+  tasks: Task[];
+  loading: boolean;
+  error: string;
+  retry: () => void;
+}
+
+export function useTasks(): UseTasksResult {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");

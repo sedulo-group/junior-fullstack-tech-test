@@ -11,7 +11,11 @@ const accentColours = {
   done: "teal.500",
 };
 
-export function TaskCard({ task }: { task: Task }) {
+interface TaskCardProps {
+  task: Task;
+}
+
+export function TaskCard({ task }: TaskCardProps) {
   return (
     <Card.Root
       as="article"

@@ -18,12 +18,12 @@ import { ErrorMessage, LoadingMessage } from "../../components/page-feedback";
 import { TaskCard } from "../../components/task-card";
 import { TaskSummary } from "../../components/task-summary";
 import { useTasks } from "../../hooks/use-tasks";
-import { statusLabels, type TaskStatus } from "../../lib/tasks";
+import { statusLabels, type TaskFilter } from "../../lib/tasks";
 
 export default function TasksPage() {
   const { tasks, loading, error, retry } = useTasks();
   const [search, setSearch] = useState("");
-  const [status, setStatus] = useState<TaskStatus | "all">("all");
+  const [status, setStatus] = useState<TaskFilter>("all");
 
   const visibleTasks = tasks.filter(
     (task) =>
@@ -103,7 +103,7 @@ export default function TasksPage() {
               <NativeSelect.Field
                 value={status}
                 onChange={(event) =>
-                  setStatus(event.target.value as TaskStatus | "all")
+                  setStatus(event.target.value as TaskFilter)
                 }
               >
                 <option value="all">All statuses</option>

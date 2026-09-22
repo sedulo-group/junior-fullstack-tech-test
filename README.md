@@ -1,6 +1,6 @@
 # Taskroom
 
-A small full-stack task tracker for a junior developer interview. Three pages, a real HTTP API, plain React hooks, and Chakra UI styling. The single interface mixes polished UI with deliberate usability mistakes and one code defect for the candidate to investigate. Start by diagnosing the initial loading error in the browser console, then walk through the UI and make a small change. Interviewer spoilers are in `INTERVIEW.md`.
+A small full-stack task tracker for a junior developer interview. Three pages, a real HTTP API, plain React hooks, and Chakra UI styling. Both apps and the tests use strict TypeScript with straightforward interfaces and union types. The single interface mixes polished UI with deliberate usability mistakes and one code defect for the candidate to investigate. Start by diagnosing the initial loading error in the browser console, then walk through the UI and make a small change. Interviewer spoilers are in `INTERVIEW.md`.
 
 ## Run it
 
@@ -68,6 +68,17 @@ apps/api/src/
 
 A browser request to `/api/tasks` is forwarded by `apps/web/next.config.ts` to NestJS at `/tasks`. The controller validates the body, the service changes its array, and the frontend updates from the response. No state library, ORM, authentication flow, or shared-package build is involved.
 
+## Simple TypeScript examples
+
+- `Task` and `NewTask` interfaces describe saved tasks and create-form input.
+- `TaskStatus` is a union of three allowed strings; `TaskFilter` also allows `"all"`.
+- Named props interfaces such as `TaskCardProps` describe a component's inputs.
+- `UseTasksResult` describes the custom hook's tasks, loading state, error and retry action.
+- API methods declare concrete return types such as `Promise<Task>` and `Promise<Task[]>`.
+- Backend input interfaces describe the data; DTO classes add runtime validation.
+
+There are no custom generic functions or utility types such as `Pick` and `Record`. Standard library annotations such as `Promise<Task>` and `useState<Task[]>` just specify the expected value. No generic abstractions are needed for the interview.
+
 The small frontend/backend types are intentionally explicit on each side. Keeping a contract in sync is a useful discussion point; a generated client would add machinery to this exercise.
 
 ## Versions
@@ -104,7 +115,7 @@ npx playwright install chromium
 npm run test:e2e                # Browser tests; starts its own servers on 3217/4217
 ```
 
-The API tests use Node's built-in test runner against a real Nest HTTP server. Playwright covers the complete task lifecycle, filtering, loading/error/empty states, retries, failed writes, missing tasks, navigation, mobile overflow, and browser console errors. GitHub Actions runs both commands on Node 24. One initial-load regression in `tests/initial-load.spec.ts` is marked as an **expected failure** for the intentional code defect. It describes the correct behaviour against the untouched app. The normal UI suite explicitly repairs the known bad URL inside Playwright so it can exercise the rest of the interface against the real API; this test-only handler never runs in the app. After fixing the bug, remove `test.fail` so it becomes an ordinary passing regression test; an unexpected pass makes CI fail until the marker is removed.
+The API tests are TypeScript, compiled before running with Node's built-in test runner against a real Nest HTTP server. Playwright covers the complete task lifecycle, filtering, loading/error/empty states, retries, failed writes, missing tasks, navigation, mobile overflow, and browser console errors. GitHub Actions runs both commands on Node 24. One initial-load regression in `tests/initial-load.spec.ts` is marked as an **expected failure** for the intentional code defect. It describes the correct behaviour against the untouched app. The normal UI suite explicitly repairs the known bad URL inside Playwright so it can exercise the rest of the interface against the real API; this test-only handler never runs in the app. After fixing the bug, remove `test.fail` so it becomes an ordinary passing regression test; an unexpected pass makes CI fail until the marker is removed.
 
 For a production-mode local smoke test, run `npm run build`, then `npm run start -w apps/api` and `npm run start -w apps/web` in separate terminals.
 

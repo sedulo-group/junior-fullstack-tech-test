@@ -27,8 +27,12 @@ import {
   type TaskStatus,
 } from "../../../lib/tasks";
 
+type TaskRouteParams = {
+  id: string;
+};
+
 export default function TaskDetailPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams<TaskRouteParams>();
   const router = useRouter();
   const [task, setTask] = useState<Task | null>(null);
   const [status, setStatus] = useState<TaskStatus>("todo");
