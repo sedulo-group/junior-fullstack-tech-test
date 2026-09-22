@@ -1,5 +1,18 @@
 import { expect, test, type Page } from "@playwright/test";
 
+// Keep the UX checks executable while the interview API typo is present.
+// This forwards to the real API; no task data is mocked here.
+async function repairListRequest(page: Page) {
+  await page.route("**/api/task", async (route) => {
+    const response = await page.request.get("/api/tasks");
+    await route.fulfill({ response });
+  });
+}
+
+test.beforeEach(async ({ page }) => {
+  await repairListRequest(page);
+});
+
 async function acceptCreatePrompts(page: Page) {
   const prompts: string[] = [];
   const accept = async (dialog: import("@playwright/test").Dialog) => {
@@ -82,7 +95,7 @@ test("loading, API error, retry and an empty list", async ({ page }) => {
   const hold = new Promise<void>((resolve) => {
     release = resolve;
   });
-  await page.route("**/api/tasks", async (route) => {
+  await page.route(/\/api\/tasks?$/, async (route) => {
     await hold;
     await route.fulfill({
       status: 503,
@@ -95,10 +108,11 @@ test("loading, API error, retry and an empty list", async ({ page }) => {
   await expect(page.getByRole("main").getByRole("alert")).toContainText(
     "API temporarily unavailable",
   );
-  await page.unroute("**/api/tasks");
+  await page.unroute(/\/api\/tasks?$/);
+  await repairListRequest(page);
   await page.getByRole("button", { name: "Try again" }).click();
   await expect(page.getByText("3 tasks shown · 1 of 3 complete")).toBeVisible();
-  await page.route("**/api/tasks", (route) => route.fulfill({ json: [] }));
+  await page.route(/\/api\/tasks?$/, (route) => route.fulfill({ json: [] }));
   await page.reload();
   await expect(
     page.getByRole("heading", { name: "Your first task starts here" }),
@@ -216,13 +230,14 @@ for (const cancelAt of [1, 2]) {
   });
 }
 
-test("an unmatched search shows the empty state after a status change", async ({
-  page,
-}) => {
+test("search filters immediately and handles no matches", async ({ page }) => {
   await page.goto("/tasks");
   await expect(page.getByRole("article")).toHaveCount(3);
+  await page.getByLabel("Search tasks").fill("WELCOME");
+  await expect(page.getByRole("article")).toHaveCount(1);
+  await page.getByLabel("Search tasks").fill("");
+  await expect(page.getByRole("article")).toHaveCount(3);
   await page.getByLabel("Search tasks").fill("nothing matches this title");
-  await page.getByLabel("Filter by status").selectOption("todo");
   await expect(
     page.getByRole("heading", { name: "No matching tasks" }),
   ).toBeVisible();

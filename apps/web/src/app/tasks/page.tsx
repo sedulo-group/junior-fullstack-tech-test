@@ -13,7 +13,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { ErrorMessage, LoadingMessage } from "../../components/page-feedback";
 import { TaskCard } from "../../components/task-card";
 import { TaskSummary } from "../../components/task-summary";
@@ -25,14 +25,10 @@ export default function TasksPage() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<TaskStatus | "all">("all");
 
-  const visibleTasks = useMemo(
-    () =>
-      tasks.filter(
-        (task) =>
-          task.title.toLowerCase().includes(search.trim().toLowerCase()) &&
-          (status === "all" || task.status === status),
-      ),
-    [tasks, status],
+  const visibleTasks = tasks.filter(
+    (task) =>
+      task.title.toLowerCase().includes(search.trim().toLowerCase()) &&
+      (status === "all" || task.status === status),
   );
   const completedCount = tasks.filter((task) => task.status === "done").length;
 

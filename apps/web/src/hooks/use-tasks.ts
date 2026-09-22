@@ -20,7 +20,10 @@ export function useTasks() {
         const result = await taskApi.list(controller.signal);
         if (!controller.signal.aborted) setTasks(result);
       } catch (error) {
-        if (!controller.signal.aborted) setError(errorMessage(error));
+        if (!controller.signal.aborted) {
+          console.error("[Taskroom] Failed to load tasks:", error);
+          setError(errorMessage(error));
+        }
       } finally {
         if (!controller.signal.aborted) setLoading(false);
       }

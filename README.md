@@ -1,6 +1,6 @@
 # Taskroom
 
-A small full-stack task tracker for a junior developer interview. Three pages, a real HTTP API, plain React hooks, and Chakra UI styling. The single interface mixes polished UI with deliberate usability mistakes and one code defect for the candidate to investigate. Start with a browser walkthrough, then move into a small change. Interviewer spoilers are in `INTERVIEW.md`.
+A small full-stack task tracker for a junior developer interview. Three pages, a real HTTP API, plain React hooks, and Chakra UI styling. The single interface mixes polished UI with deliberate usability mistakes and one code defect for the candidate to investigate. Start by diagnosing the initial loading error in the browser console, then walk through the UI and make a small change. Interviewer spoilers are in `INTERVIEW.md`.
 
 ## Run it
 
@@ -104,7 +104,7 @@ npx playwright install chromium
 npm run test:e2e                # Browser tests; starts its own servers on 3217/4217
 ```
 
-The API tests use Node's built-in test runner against a real Nest HTTP server. Playwright covers the complete task lifecycle, filtering, loading/error/empty states, retries, failed writes, missing tasks, navigation, mobile overflow, and browser console errors. GitHub Actions runs both commands on Node 24. One additional search regression in `tests/search.spec.ts` is marked as an **expected failure** for the intentional code defect. Its assertions describe the correct behaviour. After fixing the bug, remove `test.fail` so it becomes an ordinary passing regression test; an unexpected pass makes CI fail until the marker is removed.
+The API tests use Node's built-in test runner against a real Nest HTTP server. Playwright covers the complete task lifecycle, filtering, loading/error/empty states, retries, failed writes, missing tasks, navigation, mobile overflow, and browser console errors. GitHub Actions runs both commands on Node 24. One initial-load regression in `tests/initial-load.spec.ts` is marked as an **expected failure** for the intentional code defect. It describes the correct behaviour against the untouched app. The normal UI suite explicitly repairs the known bad URL inside Playwright so it can exercise the rest of the interface against the real API; this test-only handler never runs in the app. After fixing the bug, remove `test.fail` so it becomes an ordinary passing regression test; an unexpected pass makes CI fail until the marker is removed.
 
 For a production-mode local smoke test, run `npm run build`, then `npm run start -w apps/api` and `npm run start -w apps/web` in separate terminals.
 

@@ -20,15 +20,17 @@ Use the single app as it is; there is no good/bad mode or second version. Let th
 2. **Low contrast:** card descriptions use `gray.400` on white in `components/task-card.tsx`; the title helper on the create form has the same treatment. Compare these with the readable task description on the detail page. Ask how to measure contrast and choose a better text token.
 3. **Subtle misalignment:** on screens at least 640px wide, the status filter is 6px lower than the search field. Inspect `mt={{ base: "0", sm: "1.5" }}` on its `Field.Root` in `app/tasks/page.tsx`. The mobile layout removes the offset. Ask them to identify the shared baseline before editing styles.
 
-### Deliberate code bug: stale search results
+### Deliberate code bug: API URL typo, visible immediately
 
-**Reproduce:** open `/tasks` with the three sample tasks, type `welcome`, and observe that all three cards remain. Select “To do”; the matching card appears. Clear the search text and select “All statuses” to restore the list.
+**Reproduce:** open DevTools → Console, then reload `/tasks`. No typing or clicking is needed. The browser reports `GET /api/task 404` and `[Taskroom] Failed to load tasks: Error: Cannot GET /task`. The page displays the API error and a retry button. The server logs the failed request too.
 
-**Cause:** `app/tasks/page.tsx` memoises `visibleTasks` using `useMemo`, but its dependency list is `[tasks, status]`. The calculation also reads `search`. Typing changes state and renders the component, but React reuses the previous filtered array until another dependency changes.
+**Cause:** the `list` function in `apps/web/src/lib/api.ts` requests `/task` (singular). NestJS exposes `/tasks` (plural) in `apps/api/src/tasks/tasks.controller.ts`. Next.js forwards `/api/task` to `/task`, so this is a real failed request, not a fabricated console message. The catch block in `hooks/use-tasks.ts` logs the actual error and its stack.
 
-**Acceptable fixes:** remove the unnecessary memoisation and calculate the filtered array during rendering, or include `search` in the dependency list. Ask why the simple calculation is enough for a three-item list.
+**Fix:** add the missing `s` to the list URL. This is a one-character fix. Ask the candidate to compare the Network request with the controller route, make the change, reload, and confirm that the three task cards appear and the console is clear.
 
-**Verification:** typing, clearing, mixed-case input, whitespace, and combining search with a status should all immediately produce the correct cards. Run the regression in `tests/search.spec.ts`. It currently expects failure; remove `test.fail` after the repair. Keep the other tests passing. This is a functional UI defect, not a build error or a runtime crash.
+Once the URL is fixed, search should update immediately, including clearing, mixed-case input, and no matches. The intended contrast, alignment, and confirmation mistakes remain for the next part of the discussion. The create and detail pages are still accessible before fixing the list.
+
+**Tests:** `tests/initial-load.spec.ts` runs against the untouched application and marks the list-loading assertion as an expected failure. Remove `test.fail` after the fix. The other browser tests explicitly forward the known bad list URL to the real working API in a test-only route handler so the UX flows can still be checked; this handler never runs in the app and becomes unnecessary after the correction.
 
 Do not treat these intentional issues as accidental regressions. Keep the initial interview branch available if you want to reuse the exercise after the candidate fixes it.
 
