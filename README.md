@@ -1,6 +1,6 @@
 # Taskroom
 
-A small full-stack task tracker for a junior developer interview. Three pages, a real HTTP API, plain React hooks, and Chakra UI styling. The application is complete and working so the session can start with a walkthrough and move into a small change.
+A small full-stack task tracker for a junior developer interview. Three pages, a real HTTP API, plain React hooks, and Chakra UI styling. The single interface mixes polished UI with deliberate usability mistakes and one code defect for the candidate to investigate. Start with a browser walkthrough, then move into a small change. Interviewer spoilers are in `INTERVIEW.md`.
 
 ## Run it
 
@@ -50,6 +50,7 @@ apps/web/src/
   app/tasks/[id]/page.tsx        Route params, effect and mutations
   components/app-shell.tsx      Navigation and responsive Chakra styles
   components/task-card.tsx      A small component with typed props
+  components/task-summary.tsx   Derived counts by status
   components/status-badge.tsx   Status-to-colour mapping
   components/page-feedback.tsx Loading and error visuals
   hooks/use-tasks.ts             Custom hook, fetching and effect cleanup
@@ -103,7 +104,7 @@ npx playwright install chromium
 npm run test:e2e                # Browser tests; starts its own servers on 3217/4217
 ```
 
-The API tests use Node's built-in test runner against a real Nest HTTP server. Playwright covers the complete task lifecycle, filtering, loading/error/empty states, retries, failed writes, missing tasks, navigation, mobile overflow, and browser console errors. GitHub Actions runs both commands on Node 24.
+The API tests use Node's built-in test runner against a real Nest HTTP server. Playwright covers the complete task lifecycle, filtering, loading/error/empty states, retries, failed writes, missing tasks, navigation, mobile overflow, and browser console errors. GitHub Actions runs both commands on Node 24. One additional search regression in `tests/search.spec.ts` is marked as an **expected failure** for the intentional code defect. Its assertions describe the correct behaviour. After fixing the bug, remove `test.fail` so it becomes an ordinary passing regression test; an unexpected pass makes CI fail until the marker is removed.
 
 For a production-mode local smoke test, run `npm run build`, then `npm run start -w apps/api` and `npm run start -w apps/web` in separate terminals.
 
